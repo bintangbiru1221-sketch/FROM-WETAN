@@ -14,6 +14,7 @@ export default function MonitorPage() {
   const [campaign, setCampaign] = useState(null);
   const [recipients, setRecipients] = useState([]);
   const [paused, setPaused] = useState(false);
+  const [sendingBatch, setSendingBatch] = useState(false);
 
   async function load() {
     const { data: camp } = await supabase.from('campaigns').select('*').eq('id', id).single();
@@ -37,6 +38,21 @@ export default function MonitorPage() {
     await supabase.from('campaigns').update({ status: newStatus }).eq('id', id);
     setPaused(!paused);
     load();
+  }
+
+  async function handleSendNow() {
+    setSendingBatch(true);
+    try {
+      const res = await fetch(`/api/campaigns/${id}/send-batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignId: id }),
+      });
+      await res.json();
+      load();
+    } finally {
+      setSendingBatch(false);
+    }
   }
 
   if (!campaign) {
@@ -86,6 +102,11 @@ export default function MonitorPage() {
             <div className="live-foot">Batch {currentBatch}/{totalBatches} · {pct}% selesai</div>
             {campaign.next_batch_at && campaign.status === 'running' && (
               <div className="live-foot">Batch berikutnya: {new Date(campaign.next_batch_at).toLocaleTimeString('id-ID')}</div>
+            )}
+            {campaign.status === 'running' && (
+              <button onClick={handleSendNow} disabled={sendingBatch} className="cta-btn" style={{ marginTop: 12, width: '100%', border: 'none' }}>
+                {sendingBatch ? 'Mengirim batch…' : 'Kirim Batch Sekarang'}
+              </button>
             )}
           </div>
 
