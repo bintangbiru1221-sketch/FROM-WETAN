@@ -102,8 +102,8 @@ export default function ContactsPage() {
             <button onClick={() => fileInput.current.click()} className="cta-btn" style={{ flex: 1, fontSize: 12, padding: '9px', border: 'none' }}>
               <i className="ti ti-upload" aria-hidden="true"></i> Import CSV
             </button>
-            <button onClick={() => setShowAdd((v) => !v)} className="qty-btn qty-plus" style={{ width: 38, height: 38, borderRadius: 10 }}>
-              <i className="ti ti-plus" aria-hidden="true"></i>
+            <button onClick={() => setShowAdd((v) => !v)} className="cta-btn" style={{ flex: 1, fontSize: 12, padding: '9px', border: 'none', background: 'var(--purple)' }}>
+              <i className="ti ti-plus" aria-hidden="true"></i> Tambah Kontak
             </button>
             <input ref={fileInput} type="file" accept=".csv" onChange={handleCsvFile} style={{ display: 'none' }} />
           </div>
